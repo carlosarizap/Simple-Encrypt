@@ -29,7 +29,7 @@ const cipherMatrix2: Record<string, string> = {
 
 // Función de encriptar
 const encrypt = (text: string): string => {
-  let firstLevel = Array.from(text)
+  const firstLevel = Array.from(text) // Changed `let` to `const`
     .filter((char) => /[a-zA-Z0-9]/.test(char))
     .map((char) => cipherMatrix1[char] || char)
     .join("");
@@ -42,7 +42,7 @@ const encrypt = (text: string): string => {
 
 // Función de desencriptar
 const decrypt = (encryptedText: string): string => {
-  let firstLevel = Array.from(encryptedText)
+  const firstLevel = Array.from(encryptedText) // Changed `let` to `const`
     .map((char) => Object.keys(cipherMatrix2).find((key) => cipherMatrix2[key] === char) || char)
     .join("");
 
@@ -51,6 +51,7 @@ const decrypt = (encryptedText: string): string => {
     return Object.keys(cipherMatrix1).find((key) => cipherMatrix1[key] === pair) || pair;
   }).join("");
 };
+
 
 // Método GET
 export async function GET(req: Request) {
