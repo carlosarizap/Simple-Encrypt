@@ -1,100 +1,86 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [text, setText] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleProcess = async (mode: 'encrypt' | 'decrypt') => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/crypto?text=${encodeURIComponent(text)}&mode=${mode}`);
+      const data = await response.json();
+      setResult(data.result || 'Error en el proceso.');
+    } catch (error) {
+      if (error instanceof Error) {
+        setResult('Error en el cliente: ' + error.message);
+      } else {
+        setResult('Error desconocido');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      {/* Fondo de video */}
+      <video
+        autoPlay
+        loop
+        muted
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+      >
+        <source src="/space-video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Contenido */}
+      <div className="relative z-10 bg-black bg-opacity-60 p-6 rounded-lg shadow-2xl max-w-md w-full text-center">
+        <h1 className="text-4xl font-extrabold text-white mb-2">
+          Carlos Ariza
+        </h1>
+        <h2 className="text-xl font-semibold text-blue-400 mb-4">
+          Seguridad Informática
+        </h2>
+
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Ingresa tu texto aquí..."
+          className="w-full p-3 border border-blue-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-800 placeholder-gray-400 mb-4"
+          rows={4}
+        />
+
+        <div className="flex space-x-4 justify-center">
+          <button
+            onClick={() => handleProcess('encrypt')}
+            className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-lg hover:scale-105 transform transition text-sm"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {loading ? 'Cargando...' : 'Encriptar'}
+          </button>
+          <button
+            onClick={() => handleProcess('decrypt')}
+            className="px-6 py-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-lg shadow-lg hover:scale-105 transform transition text-sm"
           >
-            Read our docs
-          </a>
+            {loading ? 'Desencriptando...' : 'Desencriptar'}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+        <h3 className="text-lg font-semibold text-white mt-6">Resultado:</h3>
+        <textarea
+          value={result}
+          readOnly
+          className="w-full p-3 border border-green-400 rounded-md shadow-sm focus:outline-none bg-gray-200 text-sm text-gray-800 mt-4"
+          rows={4}
+        />
+      </div>
+
+      {/* Footer */}
+      <footer className="absolute bottom-4 text-white text-sm">
+        <p>Diseñado por Carlos Ariza | Seguridad Informática © {new Date().getFullYear()}</p>
       </footer>
     </div>
   );
